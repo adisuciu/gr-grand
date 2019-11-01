@@ -36,9 +36,9 @@ list(APPEND grand_sources
 )
 
 list(APPEND GRAND_LIBS
-  -llog
-  -lOpenSLES
-  -landroid
+  android
+  log
+  OpenSLES
 )
 
 set(grand_sources "${grand_sources}" PARENT_SCOPE)
@@ -48,7 +48,8 @@ if(NOT grand_sources)
 endif(NOT grand_sources)
 
 add_library(gnuradio-grand SHARED ${grand_sources})
-target_link_libraries(gnuradio-grand gnuradio::gnuradio-runtime ${GRNAD_LIBS})
+target_link_directories(gnuradio-grand PUBLIC /home/basti/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/28/)
+target_link_libraries(gnuradio-grand gnuradio::gnuradio-runtime ${GRAND_LIBS})
 target_include_directories(gnuradio-grand
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
     PUBLIC $<INSTALL_INTERFACE:include>
