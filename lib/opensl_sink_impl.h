@@ -33,7 +33,7 @@ namespace gr {
     class opensl_sink_impl : public opensl_sink
     {
      private:
-      int d_sample_rate;
+      SLuint32 d_sample_rate;
       bool d_once;
 
       SLObjectItf d_engine;

@@ -93,7 +93,7 @@ namespace gr {
     {
       SLresult result;
       uint32_t channels = 1;
-      int speakers;
+      SLuint32 speakers;
       if(channels > 1)
         speakers = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
       else
