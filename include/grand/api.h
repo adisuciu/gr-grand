@@ -25,9 +25,9 @@
 #include <gnuradio/attributes.h>
 
 #ifdef gnuradio_grand_EXPORTS
-#  define GRAND_API __GR_ATTR_EXPORT
+#define GRAND_API __GR_ATTR_EXPORT
 #else
-#  define GRAND_API __GR_ATTR_IMPORT
+#define GRAND_API __GR_ATTR_IMPORT
 #endif
 
 #endif /* INCLUDED_GRAND_API_H */

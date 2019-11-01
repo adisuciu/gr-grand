@@ -22,9 +22,10 @@ FIND_LIBRARY(
           /usr/local/lib64
           /usr/lib
           /usr/lib64
-)
+          )
+
+include("${CMAKE_CURRENT_LIST_DIR}/grandTarget.cmake")
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GRAND DEFAULT_MSG GRAND_LIBRARIES GRAND_INCLUDE_DIRS)
 MARK_AS_ADVANCED(GRAND_LIBRARIES GRAND_INCLUDE_DIRS)
-
