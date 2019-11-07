@@ -27,12 +27,12 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 list(APPEND grand_sources
-    # sensor_base.cc
-    # accelerometer_impl.cc
-    # light_sensor_impl.cc
+    sensor_base.cc
+    accelerometer_impl.cc
+    light_sensor_impl.cc
     opensl_sink_impl.cc
-    # opensl_source_impl.cc
-    # float_array_impl.cc
+    opensl_source_impl.cc
+    float_array_impl.cc
 )
 
 list(APPEND GRAND_LIBS

@@ -189,6 +189,7 @@ namespace gr {
                 boost::str(boost::format("Could not enable sensor %1%") % d_type_str));
         throw std::runtime_error("grand::sensor_base");
       }
+      return true;
     }
 
 

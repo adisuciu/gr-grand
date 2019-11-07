@@ -33,7 +33,7 @@ namespace gr {
     class opensl_source_impl : public opensl_source
     {
      private:
-      int d_sample_rate;
+      SLuint32 d_sample_rate;
       int d_size;
       short *d_buffer;
 
