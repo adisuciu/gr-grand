@@ -1,34 +1,20 @@
 /* -*- c++ -*- */
 /*
- * Copyright 2014 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2022 gr-grand author.
  *
- * This is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3, or (at your option)
- * any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street,
- * Boston, MA 02110-1301, USA.
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <gnuradio/io_signature.h>
-#include <volk/volk.h>
 #include "opensl_sink_impl.h"
+#include <boost/format.hpp>
+#include <volk/volk.h>
 
 namespace gr {
   namespace grand {
 
+    #pragma message("set the following appropriately and remove this warning")
+    using input_type = float;
     opensl_sink::sptr
     opensl_sink::make(int sampling_rate)
     {
@@ -36,6 +22,10 @@ namespace gr {
         (new opensl_sink_impl(sampling_rate));
     }
 
+
+    /*
+     * The private constructor
+     */
     opensl_sink_impl::opensl_sink_impl(int sampling_rate)
       : gr::sync_block("opensl_sink",
                        gr::io_signature::make(1, 1, sizeof(float)),

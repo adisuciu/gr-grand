@@ -23,7 +23,8 @@
 #endif
 
 #include <gnuradio/logger.h>
-#include <grand/sensor_base.h>
+#include <gnuradio/grand/sensor_base.h>
+#include <boost/format.hpp>
 
 #define MY_LOOPER_ID 3
 

@@ -1,0 +1,22 @@
+id: grand_opensl_sink
+label: opensl_sink
+category: grand
+
+parameters:
+-   id: '...'
+    label: '...'
+    dtype: '...'
+
+inputs:
+-   domain: stream
+    dtype: ''
+
+outputs:
+-   domain: stream
+    dtype: ''
+
+templates:
+    imports: import grand
+    make: grand.opensl_sink(${sampling_rate})
+
+file_format: 1
