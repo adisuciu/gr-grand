@@ -12,6 +12,7 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 #include <volk/volk.h>
+#include "audio_common.h"
 
 namespace gr {
   namespace grand {
@@ -31,13 +32,20 @@ namespace gr {
       SLPlayItf   d_bq_player_play;
       SLAndroidSimpleBufferQueueItf d_bq_player_buffer_queue;
 
+      SLresult startPlayer(void);
+      void stopPlayer(void);
+
      public:
       int d_size;
-      short *d_buffer;
+      short *d_buffer[2];
+      int currentBufferIdx;
       int d_index;
 
       opensl_sink_impl(int sampling_rate);
       ~opensl_sink_impl();
+
+      bool start() override;
+      bool stop() override;
 
       gr::thread::mutex mutex_lock;
       gr::thread::condition_variable condition;
@@ -48,7 +56,7 @@ namespace gr {
 
       int work(int noutput_items,
 	       gr_vector_const_void_star &input_items,
-	       gr_vector_void_star &output_items);
+	       gr_vector_void_star &output_items) override;
     };
 
   } // namespace grand

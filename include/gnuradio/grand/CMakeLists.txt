@@ -16,6 +16,5 @@ install(FILES
     opensl_sink.h
     light_sensor.h
     float_array.h 
-    basic_logger.h
     DESTINATION include/gnuradio/grand
 )

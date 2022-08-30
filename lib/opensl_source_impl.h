@@ -11,6 +11,7 @@
 #include <gnuradio/grand/opensl_source.h>
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
+#include "audio_common.h"
 
 namespace gr {
   namespace grand {
@@ -32,10 +33,12 @@ namespace gr {
       SLAndroidSimpleBufferQueueItf d_recorder_buffer_queue;
 
       void setup_interface();
-
      public:
       opensl_source_impl(int sampling_rate);
       ~opensl_source_impl();
+
+      bool start() override;
+      bool stop() override;
 
       gr::thread::mutex mutex_lock;
       gr::thread::condition_variable condition;
@@ -48,7 +51,7 @@ namespace gr {
               int noutput_items,
               gr_vector_const_void_star &input_items,
               gr_vector_void_star &output_items
-      );
+      ) override;
     };
 
   } // namespace grand

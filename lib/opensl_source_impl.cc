@@ -17,7 +17,6 @@
 namespace gr {
   namespace grand {
 
-    #pragma message("set the following appropriately and remove this warning")
     using output_type = float;
     opensl_source::sptr
     opensl_source::make(int sampling_rate)
@@ -41,6 +40,10 @@ namespace gr {
 
       set_output_multiple(d_size);
 
+      
+    }
+
+    bool opensl_source_impl::start() {
       setup_interface();
 
       d_buffer = (short*)volk_malloc(d_size*sizeof(short), volk_get_alignment());
@@ -51,6 +54,19 @@ namespace gr {
         GR_ERROR("grand::audio_source", e);
         throw std::runtime_error(e);
       }
+      return true;
+    }
+
+    bool opensl_source_impl::stop() {
+
+        // in case already recording, stop recording and clear buffer queue
+   
+
+  #ifdef ENABLE_LOG
+    recLog_->flush();
+  #endif
+
+    return SL_BOOLEAN_TRUE;
     }
 
     opensl_source_impl::~opensl_source_impl()
