@@ -17,7 +17,7 @@ namespace gr {
     class accelerometer_impl : public accelerometer
     {
      private:
-      bool start();
+      bool start() override;
 
      public:
       accelerometer_impl();
@@ -26,7 +26,7 @@ namespace gr {
       int work(int noutput_items,
 	       gr_vector_const_void_star &input_items,
 	       gr_vector_void_star &output_items);
-    };
+    } override;
 
   } // namespace grand
 } // namespace gr

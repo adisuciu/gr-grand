@@ -16,7 +16,6 @@
 namespace gr {
   namespace grand {
 
-    #pragma message("set the following appropriately and remove this warning")
     using input_type = float;
     float_array::sptr
     float_array::make(jfloatArray array, int len, JavaVM *vm)

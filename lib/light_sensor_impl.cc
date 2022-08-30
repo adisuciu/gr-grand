@@ -17,7 +17,6 @@
 namespace gr {
   namespace grand {
 
-    #pragma message("set the following appropriately and remove this warning")
     using output_type = float;
     light_sensor::sptr
     light_sensor::make()

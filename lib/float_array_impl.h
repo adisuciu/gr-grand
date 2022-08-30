@@ -30,15 +30,15 @@ namespace gr {
 
       void set_array(jfloatArray array, int len);
 
-      bool start();
-      bool stop();
+      bool start() override;
+      bool stop() override;
 
       // Where all the action really happens
       int work(
               int noutput_items,
               gr_vector_const_void_star &input_items,
               gr_vector_void_star &output_items
-      );
+      ) override;
     };
 
   } // namespace grand

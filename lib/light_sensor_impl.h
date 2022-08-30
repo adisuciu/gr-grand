@@ -17,7 +17,7 @@ namespace gr {
     class light_sensor_impl : public light_sensor
     {
      private:
-      bool start();
+      bool start() override;
 
      public:
       light_sensor_impl();
@@ -25,7 +25,7 @@ namespace gr {
 
       int work(int noutput_items,
 	       gr_vector_const_void_star &input_items,
-	       gr_vector_void_star &output_items);
+	       gr_vector_void_star &output_items) override;
     };
 
   } // namespace grand
