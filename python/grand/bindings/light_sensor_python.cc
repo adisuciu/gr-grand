@@ -37,7 +37,7 @@ void bind_light_sensor(py::module& m)
     gr::sync_block,
         gr::block,
         gr::basic_block,
-        std::shared_ptr<light_sensor>>(m, "light_sensor", D(light_sensor))
+        PYBIND11_SH_DEF(light_sensor)>(m, "light_sensor", D(light_sensor))
 
         .def(py::init(&light_sensor::make),
            D(light_sensor,make)

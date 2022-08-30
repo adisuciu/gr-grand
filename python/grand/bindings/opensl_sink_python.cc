@@ -37,7 +37,7 @@ void bind_opensl_sink(py::module& m)
     gr::sync_block,
         gr::block,
         gr::basic_block,
-        std::shared_ptr<opensl_sink>>(m, "opensl_sink", D(opensl_sink))
+        PYBIND11_SH_DEF(opensl_sink)>(m, "opensl_sink", D(opensl_sink))
 
         .def(py::init(&opensl_sink::make),
            py::arg("sampling_rate"),

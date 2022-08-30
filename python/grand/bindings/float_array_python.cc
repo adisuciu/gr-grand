@@ -37,7 +37,7 @@ void bind_float_array(py::module& m)
     gr::sync_block,
         gr::block,
         gr::basic_block,
-        std::shared_ptr<float_array>>(m, "float_array", D(float_array))
+        PYBIND11_SH_DEF(float_array)>(m, "float_array", D(float_array))
 
         .def(py::init(&float_array::make),
            py::arg("array"),

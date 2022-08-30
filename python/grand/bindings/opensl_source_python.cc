@@ -37,7 +37,7 @@ void bind_opensl_source(py::module& m)
     gr::sync_block,
         gr::block,
         gr::basic_block,
-        std::shared_ptr<opensl_source>>(m, "opensl_source", D(opensl_source))
+        PYBIND11_SH_DEF(opensl_source)>(m, "opensl_source", D(opensl_source))
 
         .def(py::init(&opensl_source::make),
            py::arg("sampling_rate"),
