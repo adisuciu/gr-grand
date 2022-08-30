@@ -36,7 +36,7 @@ namespace gr
       d_once = false;
       signal = true;
 
-
+      playQueue_ = new AudioQueue(16);
 
       setup_interface();
 
@@ -73,8 +73,8 @@ f (playerObjectItf_ != NULL) {
   }
 
   delete[] silentBuf_.buf_;*/
-      volk_free(d_buffer[0]);
-      volk_free(d_buffer[1]);
+        volk_free(d_buffer);
+      
     }
 
     SLresult opensl_sink_impl::startPlayer(void)
@@ -123,21 +123,14 @@ f (playerObjectItf_ != NULL) {
     bool opensl_sink_impl::start()
     {
       startPlayer();
-      currentBufferIdx = 0;
-      d_buffer[0] = (short *)volk_malloc(d_size * sizeof(short), volk_get_alignment());
-      d_buffer[1] = (short *)volk_malloc(d_size * sizeof(short), volk_get_alignment());
-      if (!d_buffer[0])
+      d_buffer = (short *)volk_malloc(d_size * sizeof(short), volk_get_alignment());      
+      if (!d_buffer)
       {
         std::string e = boost::str(boost::format("Unable to allocate audio buffer of %1% bytes") % (d_size * sizeof(short)));
         GR_ERROR("grand::audio_sink", e);
         throw std::runtime_error("grand::audio_sink");
       }
-      if (!d_buffer[1])
-      {
-        std::string e = boost::str(boost::format("Unable to allocate audio buffer of %1% bytes") % (d_size * sizeof(short)));
-        GR_ERROR("grand::audio_sink", e);
-        throw std::runtime_error("grand::audio_sink");
-      }
+      
       return true;
     }
 
@@ -334,13 +327,17 @@ f (playerObjectItf_ != NULL) {
     queue_callback(SLAndroidSimpleBufferQueueItf bq, void *context)
     {
       opensl_sink_impl *c = (opensl_sink_impl *)context;
-      (*bq)->Enqueue(bq, c->d_buffer[c->currentBufferIdx], c->d_size * sizeof(short));
-      
-      c->currentBufferIdx=!(c->currentBufferIdx);
-
-      gr::thread::scoped_lock lock(c->mutex_lock);
+      sample_buf *buf;
+      // dequeue from shadowbuf and free
+      c->playQueue_->front(&buf);
+      c->playQueue_->pop();
+      volk_free(buf->buf_);
+      volk_free(buf);
+      //(*bq)->Enqueue(bq, c->d_buffer[c->currentBufferIdx], c->d_size * sizeof(short));
+            
+      /*gr::thread::scoped_lock lock(c->mutex_lock);
       c->signal = true;
-      c->condition.notify_one();
+      c->condition.notify_one();*/
     }
 
     int
@@ -353,17 +350,26 @@ f (playerObjectItf_ != NULL) {
       float scale_factor = 16384.0f;
 
       gr::thread::scoped_lock lock(mutex_lock);
-      while (!signal)
+     /* while (!signal)
         condition.wait(lock);
-      signal = false;
+      signal = false;*/
 
-      volk_32f_s32f_convert_16i(d_buffer[currentBufferIdx], in, scale_factor, d_size);
+      sample_buf *buf;
+      buf = (sample_buf*)volk_malloc(sizeof(sample_buf),volk_get_alignment());      
+      d_buffer = (short *)volk_malloc(d_size * sizeof(short), volk_get_alignment());
+      buf->buf_ = (uint8_t*)d_buffer;
+      buf->cap_ = d_size * sizeof(short);
+      buf->size_ = d_size * sizeof(short);
+      volk_32f_s32f_convert_16i(d_buffer, in, scale_factor, d_size);
+      // create sample buf and enqueue to shadowbuf
+      playQueue_->push(buf);
+      (*d_bq_player_buffer_queue)->Enqueue(d_bq_player_buffer_queue, d_buffer, d_size * sizeof(short));
 
-      if (!d_once)
+      /*if (!d_once)
       {
-        (*d_bq_player_buffer_queue)->Enqueue(d_bq_player_buffer_queue, d_buffer[0], d_size * sizeof(short));
+        (*d_bq_player_buffer_queue)->Enqueue(d_bq_player_buffer_queue, d_buffer, d_size * sizeof(short));
         d_once = true;
-      }
+      }*/
 
       // Tell runtime system how many output items we produced.
       return d_size;

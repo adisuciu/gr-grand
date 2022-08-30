@@ -13,6 +13,9 @@
 #include <SLES/OpenSLES_Android.h>
 #include <volk/volk.h>
 #include "audio_common.h"
+#include "buf_manager.h"
+
+#define PLAYBUF_CNT 16
 
 namespace gr {
   namespace grand {
@@ -31,15 +34,18 @@ namespace gr {
       SLObjectItf d_bq_player_obj;
       SLPlayItf   d_bq_player_play;
       SLAndroidSimpleBufferQueueItf d_bq_player_buffer_queue;
+      sample_buf silentBuf_;
+     
+      
 
       SLresult startPlayer(void);
       void stopPlayer(void);
 
      public:
       int d_size;
-      short *d_buffer[2];
-      int currentBufferIdx;
+      short *d_buffer;
       int d_index;
+       AudioQueue *playQueue_;
 
       opensl_sink_impl(int sampling_rate);
       ~opensl_sink_impl();
