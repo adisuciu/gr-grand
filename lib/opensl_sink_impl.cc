@@ -32,11 +32,8 @@ namespace gr
                          gr::io_signature::make(0, 0, 0))
     {
       set_sample_rate(sampling_rate);
-      d_size = 16384;
-      d_once = false;
+      d_size = 8192;
       signal = true;
-
-      playQueue_ = new AudioQueue(16);
 
       setup_interface();
 
@@ -46,34 +43,10 @@ namespace gr
     opensl_sink_impl::~opensl_sink_impl()
     {
 
-/*gr::thread::scoped_lock lock(c->mutex_lock);
-f (playerObjectItf_ != NULL) {
-    (*playerObjectItf_)->Destroy(playerObjectItf_);
-  }
-  // Consume all non-completed audio buffers
-  sample_buf *buf = NULL;
-  while (devShadowQueue_->front(&buf)) {
-    buf->size_ = 0;
-    devShadowQueue_->pop();
-    if(buf != &silentBuf_) {
-      freeQueue_->push(buf);
-    }
-  }
-  delete devShadowQueue_;
-
-  while (playQueue_->front(&buf)) {
-    buf->size_ = 0;
-    playQueue_->pop();
-    freeQueue_->push(buf);
-  }
-
-  // destroy output mix object, and invalidate all associated interfaces
-  if (outputMixObjectItf_) {
-    (*outputMixObjectItf_)->Destroy(outputMixObjectItf_);
-  }
-
-  delete[] silentBuf_.buf_;*/
-        volk_free(d_buffer);
+      for (int i = 0; i < PLAYBUF_CNT; i++)
+      {
+        volk_free(d_buffer[i]);
+      }
       
     }
 
@@ -92,12 +65,6 @@ f (playerObjectItf_ != NULL) {
 
       result = (*d_bq_player_play)->SetPlayState(d_bq_player_play, SL_PLAYSTATE_STOPPED);
       SLASSERT(result);
-
-     /*result =
-          (*d_bq_player_buffer_queue)
-              ->Enqueue(d_bq_player_buffer_queue, silentBuf_.buf_, silentBuf_.size_);
-      SLASSERT(result);
-      devShadowQueue_->push(&silentBuf_);*/
 
       result = (*d_bq_player_play)->SetPlayState(d_bq_player_play, SL_PLAYSTATE_PLAYING);
       SLASSERT(result);
@@ -123,14 +90,19 @@ f (playerObjectItf_ != NULL) {
     bool opensl_sink_impl::start()
     {
       startPlayer();
-      d_buffer = (short *)volk_malloc(d_size * sizeof(short), volk_get_alignment());      
-      if (!d_buffer)
+      bufIdx = 0;
+
+      for (int i = 0; i < PLAYBUF_CNT; i++)
       {
-        std::string e = boost::str(boost::format("Unable to allocate audio buffer of %1% bytes") % (d_size * sizeof(short)));
-        GR_ERROR("grand::audio_sink", e);
-        throw std::runtime_error("grand::audio_sink");
+        d_buffer[i] = (short *)volk_malloc(d_size * sizeof(short), volk_get_alignment());
+        if (!d_buffer[i])
+        {
+          std::string e = boost::str(boost::format("Unable to allocate audio buffer of %1% bytes") % (d_size * sizeof(short)));
+          GR_ERROR("grand::audio_sink", e);
+          throw std::runtime_error("grand::audio_sink");
+        }
       }
-      
+
       return true;
     }
 
@@ -311,33 +283,12 @@ f (playerObjectItf_ != NULL) {
         throw std::runtime_error("grand::audio_sink");
       }
       (void)result;
-
-      // create an empty queue to track deviceQueue
-      /*devShadowQueue_ = new AudioQueue(DEVICE_SHADOW_BUFFER_QUEUE_LEN);
-      assert(devShadowQueue_);
-
-      silentBuf_.cap_ = (format_pcm.containerSize >> 3) * format_pcm.numChannels *
-                        sampleInfo_.framesPerBuf_;
-      silentBuf_.buf_ = new uint8_t[silentBuf_.cap_];
-      memset(silentBuf_.buf_, 0, silentBuf_.cap_);
-      silentBuf_.size_ = silentBuf_.cap_;*/
     }
 
     void
     queue_callback(SLAndroidSimpleBufferQueueItf bq, void *context)
     {
-      opensl_sink_impl *c = (opensl_sink_impl *)context;
-      sample_buf *buf;
-      // dequeue from shadowbuf and free
-      c->playQueue_->front(&buf);
-      c->playQueue_->pop();
-      volk_free(buf->buf_);
-      volk_free(buf);
-      //(*bq)->Enqueue(bq, c->d_buffer[c->currentBufferIdx], c->d_size * sizeof(short));
-            
-      /*gr::thread::scoped_lock lock(c->mutex_lock);
-      c->signal = true;
-      c->condition.notify_one();*/
+
     }
 
     int
@@ -348,28 +299,14 @@ f (playerObjectItf_ != NULL) {
       const float *in = (const float *)input_items[0];
 
       float scale_factor = 16384.0f;
-
       gr::thread::scoped_lock lock(mutex_lock);
-     /* while (!signal)
-        condition.wait(lock);
-      signal = false;*/
+      
+      volk_32f_s32f_convert_16i(d_buffer[bufIdx], in, scale_factor, d_size);
 
-      sample_buf *buf;
-      buf = (sample_buf*)volk_malloc(sizeof(sample_buf),volk_get_alignment());      
-      d_buffer = (short *)volk_malloc(d_size * sizeof(short), volk_get_alignment());
-      buf->buf_ = (uint8_t*)d_buffer;
-      buf->cap_ = d_size * sizeof(short);
-      buf->size_ = d_size * sizeof(short);
-      volk_32f_s32f_convert_16i(d_buffer, in, scale_factor, d_size);
-      // create sample buf and enqueue to shadowbuf
-      playQueue_->push(buf);
-      (*d_bq_player_buffer_queue)->Enqueue(d_bq_player_buffer_queue, d_buffer, d_size * sizeof(short));
-
-      /*if (!d_once)
-      {
-        (*d_bq_player_buffer_queue)->Enqueue(d_bq_player_buffer_queue, d_buffer, d_size * sizeof(short));
-        d_once = true;
-      }*/
+      // use PLAYBUF_CNT buffers circularly
+      (*d_bq_player_buffer_queue)->Enqueue(d_bq_player_buffer_queue, d_buffer[bufIdx], d_size * sizeof(short)); 
+      bufIdx++;
+      bufIdx = bufIdx % PLAYBUF_CNT;
 
       // Tell runtime system how many output items we produced.
       return d_size;

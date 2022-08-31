@@ -26,7 +26,6 @@ namespace gr {
     {
      private:
       SLuint32 d_sample_rate;
-      bool d_once;
 
       SLObjectItf d_engine;
       SLEngineItf d_engine_eng;
@@ -34,18 +33,14 @@ namespace gr {
       SLObjectItf d_bq_player_obj;
       SLPlayItf   d_bq_player_play;
       SLAndroidSimpleBufferQueueItf d_bq_player_buffer_queue;
-      sample_buf silentBuf_;
-     
-      
-
+  
       SLresult startPlayer(void);
       void stopPlayer(void);
 
      public:
       int d_size;
-      short *d_buffer;
-      int d_index;
-       AudioQueue *playQueue_;
+      short *d_buffer[PLAYBUF_CNT];
+      int bufIdx;
 
       opensl_sink_impl(int sampling_rate);
       ~opensl_sink_impl();
