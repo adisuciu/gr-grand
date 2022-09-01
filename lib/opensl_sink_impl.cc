@@ -10,6 +10,7 @@
 #include "buf_manager.h"
 #include <boost/format.hpp>
 #include <volk/volk.h>
+#include "basic_logger.h"
 
 namespace gr
 {
@@ -32,8 +33,9 @@ namespace gr
                          gr::io_signature::make(0, 0, 0))
     {
       set_sample_rate(sampling_rate);
-      d_size = 8192;
+      d_size = 16384;
       signal = true;
+      bufSpace = PLAYBUF_CNT;
 
       setup_interface();
 
@@ -91,14 +93,15 @@ namespace gr
     {
       startPlayer();
       bufIdx = 0;
+      bufSpace = PLAYBUF_CNT;
 
       for (int i = 0; i < PLAYBUF_CNT; i++)
       {
         d_buffer[i] = (short *)volk_malloc(d_size * sizeof(short), volk_get_alignment());
         if (!d_buffer[i])
         {
-          std::string e = boost::str(boost::format("Unable to allocate audio buffer of %1% bytes") % (d_size * sizeof(short)));
-          GR_ERROR("grand::audio_sink", e);
+          //std::string e = boost::str(boost::format("Unable to allocate audio buffer of %1% bytes") % (d_size * sizeof(short)));
+          //GR_ERROR("grand::audio_sink", e);
           throw std::runtime_error("grand::audio_sink");
         }
       }
@@ -288,7 +291,10 @@ namespace gr
     void
     queue_callback(SLAndroidSimpleBufferQueueItf bq, void *context)
     {
-
+      opensl_sink_impl *c = (opensl_sink_impl*)context;
+      gr::thread::scoped_lock lock(c->mutex_lock);
+      c->bufSpace++;
+      //LOGD("cleared buffer - bufspace: %d ", c->bufSpace);
     }
 
     int
@@ -301,10 +307,14 @@ namespace gr
       float scale_factor = 16384.0f;
       gr::thread::scoped_lock lock(mutex_lock);
       
+      if(bufSpace == 0)
+        return 0;
       volk_32f_s32f_convert_16i(d_buffer[bufIdx], in, scale_factor, d_size);
 
       // use PLAYBUF_CNT buffers circularly
-      (*d_bq_player_buffer_queue)->Enqueue(d_bq_player_buffer_queue, d_buffer[bufIdx], d_size * sizeof(short)); 
+      (*d_bq_player_buffer_queue)->Enqueue(d_bq_player_buffer_queue, d_buffer[bufIdx], d_size * sizeof(short));      
+      bufSpace--;
+      //LOGD("enqueued buffer - bufspace: %d ", bufSpace);
       bufIdx++;
       bufIdx = bufIdx % PLAYBUF_CNT;
 

@@ -41,6 +41,7 @@ namespace gr {
       int d_size;
       short *d_buffer[PLAYBUF_CNT];
       int bufIdx;
+      int bufSpace;
 
       opensl_sink_impl(int sampling_rate);
       ~opensl_sink_impl();
