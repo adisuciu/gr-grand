@@ -14,7 +14,7 @@
 /* BINDTOOL_GEN_AUTOMATIC(0)                                                       */
 /* BINDTOOL_USE_PYGCCXML(0)                                                        */
 /* BINDTOOL_HEADER_FILE(light_sensor.h)                                        */
-/* BINDTOOL_HEADER_FILE_HASH(5b811a6782db782fc622f48118177986)                     */
+/* BINDTOOL_HEADER_FILE_HASH(ee143cd31a8338579e1c98a1ff3e84af)                     */
 /***********************************************************************************/
 
 #include <pybind11/complex.h>

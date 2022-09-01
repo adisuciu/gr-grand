@@ -14,7 +14,7 @@
 /* BINDTOOL_GEN_AUTOMATIC(0)                                                       */
 /* BINDTOOL_USE_PYGCCXML(0)                                                        */
 /* BINDTOOL_HEADER_FILE(accelerometer.h)                                        */
-/* BINDTOOL_HEADER_FILE_HASH(8792164376f7ee90e96935d7c2e56255)                     */
+/* BINDTOOL_HEADER_FILE_HASH(3a4dd340086c532d9d6e7e0d3f913e37)                     */
 /***********************************************************************************/
 
 #include <pybind11/complex.h>
