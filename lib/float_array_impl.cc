@@ -12,6 +12,7 @@
 #include <volk/volk.h>
 #include <gnuradio/io_signature.h>
 #include "float_array_impl.h"
+#include "basic_logger.h"
 
 namespace gr {
   namespace grand {

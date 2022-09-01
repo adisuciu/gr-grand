@@ -61,7 +61,7 @@ namespace gr {
       float *outy = (float*) output_items[1];
       float *outz = (float*) output_items[2];
 
-      GR_INFO("grand::accelerometer", boost::str(boost::format("entered: %1%") % noutput_items));
+      //GR_INFO("grand::accelerometer", boost::str(boost::format("entered: %1%") % noutput_items));
 
       for(int i = 0; i < noutput_items; i++) {
         int ident = ALooper_pollOnce(-1, NULL, NULL, NULL);

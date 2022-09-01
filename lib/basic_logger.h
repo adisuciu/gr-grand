@@ -1,7 +1,8 @@
-#ifndef BASIC_LOGGER_H
-#define BASIC_LOGGER_H
+#include <android/log.h>
 #include <iostream>
 
+#ifndef BASIC_LOGGER_H
+#define BASIC_LOGGER_H
 
 #define MODULE_NAME "GR-GRAND"
 #define LOGV(...) \
@@ -17,17 +18,17 @@
 #define LOGF(...) \
   __android_log_print(ANDROID_LOG_FATAL, MODULE_NAME, __VA_ARGS__)
 
-#define GR_DEBUG(name, msg) LOGD(name,msg)
-#define GR_INFO(name, msg) LOGI(name,msg)
-#define GR_NOTICE(name, msg) LOGW(name,msg)
-#define GR_WARN(name, msg) LOGW(name,msg)
-#define GR_ERROR(name, msg) LOGE(name,msg)
-#define GR_ALERT(name, msg) LOGE(name,msg)
-#define GR_CRIT(name, msg) LOGE(name,msg)
-#define GR_FATAL(name, msg) LOGF(name,msg)
-#define GR_EMERG(name, msg) LOGF(name,msg)
-#define GR_ERRORIF(name, cond, msg) if((cond)) LOGE(name,msg)
-#define GR_ASSERT(name, cond, msg) if(!(cond)) LOGE(name,msg) assert(cond)
+#define GR_DEBUG(name, msg)  /*LOGD(name,msg)*/
+#define GR_INFO(name, msg)   /*LOGI(name,msg)*/
+#define GR_NOTICE(name, msg) /*LOGW(name,msg)*/
+#define GR_WARN(name, msg)   /*LOGW(name,msg)*/
+#define GR_ERROR(name, msg)  /*LOGE(name,msg)*/
+#define GR_ALERT(name, msg)  /*LOGE(name,msg)*/
+#define GR_CRIT(name, msg)   /*LOGE(name,msg)*/
+#define GR_FATAL(name, msg)  /*LOGF(name,msg)*/
+#define GR_EMERG(name, msg)  /*LOGF(name,msg)*/
+#define GR_ERRORIF(name, cond, msg) /*if((cond)) LOGE(name,msg)*/
+#define GR_ASSERT(name, cond, msg) /*if(!(cond)) LOGE(name,msg) assert(cond)*/
 #define GR_LOG_DEBUG(logger, msg) std::cout<<"DEBUG: "<<msg<<std::endl
 #define GR_LOG_INFO(logger, msg) std::cout<<"INFO: "<<msg<<std::endl
 #define GR_LOG_NOTICE(logger, msg) std::cout<<"NOTICE: "<<msg<<std::endl

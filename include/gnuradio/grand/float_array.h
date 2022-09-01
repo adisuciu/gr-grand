@@ -11,7 +11,6 @@
 #include <gnuradio/grand/api.h>
 #include <gnuradio/sync_block.h>
 #include <jni.h>
-#include "gnuradio/grand/basic_logger.h"
 
 namespace gr {
   namespace grand {

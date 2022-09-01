@@ -25,7 +25,6 @@
 #include <gnuradio/grand/api.h>
 #include <gnuradio/thread/thread.h>
 #include <android/sensor.h>
-#include "gnuradio/grand/basic_logger.h"
 
 namespace gr {
   namespace grand {

@@ -16,6 +16,7 @@ link_directories(${VOLK_LIBRARIES})
 ########################################################################
 include(GrPlatform) #define LIB_SUFFIX
 list(APPEND grand_sources
+    basic_logger.h
     sensor_base.cc
     accelerometer_impl.cc
     light_sensor_impl.cc

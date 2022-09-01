@@ -25,6 +25,7 @@
 #include <gnuradio/logger.h>
 #include <gnuradio/grand/sensor_base.h>
 #include <boost/format.hpp>
+#include "basic_logger.h"
 
 #define MY_LOOPER_ID 3
 
@@ -50,8 +51,8 @@ namespace gr {
       d_units = "";
       bool ret = set_sensor_type(sensor_type);
       if(!ret) {
-        GR_ERROR("grand::sensor_base",
-                 boost::str(boost::format("Failed to set sensor %1%") % sensor_type));
+        /*GR_ERROR("grand::sensor_base",
+                 "Failed to set sensor %d", sensor_type));*/
         throw std::runtime_error("grand::sensor_base");
       }
     }
@@ -138,10 +139,10 @@ namespace gr {
 
       int result;
       d_looper = ALooper_forThread();
-      GR_INFO("grand::sensor_base", boost::str(boost::format("Got looper: %1%") % d_looper));
+      //GR_INFO("grand::sensor_base", boost::str(boost::format("Got looper: %1%") % d_looper));
       if(d_looper == NULL) {
         d_looper = ALooper_prepare(0);
-        GR_INFO("grand::sensor_base", boost::str(boost::format("    prepared looper: %1%") % d_looper));
+        //GR_INFO("grand::sensor_base", boost::str(boost::format("    prepared looper: %1%") % d_looper));
 
         // If still NULL, we have a problem
         if(d_looper == NULL) {
@@ -154,8 +155,8 @@ namespace gr {
       d_manager = ASensorManager_getInstance();
       d_sensor = ASensorManager_getDefaultSensor(d_manager, d_type);
       if(d_sensor == NULL) {
-        GR_INFO("grand::sensor_base",
-                boost::str(boost::format("Could not get sensor %1%") % d_type_str));
+        //GR_INFO("grand::sensor_base",
+        //        boost::str(boost::format("Could not get sensor %1%") % d_type_str));
         throw std::runtime_error("grand::sensor_base");
       }
 
@@ -172,22 +173,22 @@ namespace gr {
       // Enable the sensor
       result = ASensorEventQueue_enableSensor(d_event_queue, d_sensor);
       if(result < 0) {
-        GR_INFO("grand::sensor_base",
-                boost::str(boost::format("Could not enable sensor %1%") % d_type_str));
+        //GR_INFO("grand::sensor_base",
+        //        boost::str(boost::format("Could not enable sensor %1%") % d_type_str));
         throw std::runtime_error("grand::sensor_base");
       }
 
       // Get the minimum delay supported by the sensor
       int min_accel_delay = ASensor_getMinDelay(d_sensor);
-      GR_INFO("grand::sensor_base",
-              boost::str(boost::format("%1%'s min delay %2%") % d_type_str % min_accel_delay));
+      //GR_INFO("grand::sensor_base",
+      //        boost::str(boost::format("%1%'s min delay %2%") % d_type_str % min_accel_delay));
 
       // Set the event rate to the minimum
       //result = ASensorEventQueue_setEventRate(d_event_queue, d_sensor, (1000L/100)*10);
       result = ASensorEventQueue_setEventRate(d_event_queue, d_sensor, min_accel_delay);
       if(result < 0) {
-        GR_INFO("grand::sensor_base",
-                boost::str(boost::format("Could not enable sensor %1%") % d_type_str));
+        //GR_INFO("grand::sensor_base",
+        //        boost::str(boost::format("Could not enable sensor %1%") % d_type_str));
         throw std::runtime_error("grand::sensor_base");
       }
       return true;
